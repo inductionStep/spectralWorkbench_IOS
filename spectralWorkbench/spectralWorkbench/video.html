@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+
+</head>
+<body>
+  <canvas id="myVideo" width="320" height="240" style="border:1px solid #000000;"></canvas>
+  <div id="out"></div>
+  <div id="data"></div>
+</body>
+<script>
+
+// Globals, fix for strict mode
+var _mainWidth = 0;
+var _canvas  = document.getElementById("myVideo");
+var _context = _canvas.getContext("2d");
+var _imageData;
+var _bytesPerPixel;
+var _bytesPerRow;
+var _width;
+var _height;
+var _drawing;
+
+function setPixel(red, green, blue, x, y) {
+	//var pixelIndex = 4 * (x + y * mainWidth);
+	
+	//imageData.data[pixelIndex    ] = red;    // red   color
+	//imageData.data[pixelIndex + 1] = green;  // green color
+	//imageData.data[pixelIndex + 2] = blue;   // blue  color
+	//imageData.data[pixelIndex + 3] = 255;
+}
+
+function setup(width, height){
+    _height = height;
+    _width = width;
+	_mainWidth = width;
+	_imageData = _context.createImageData(width, height);
+    _bytesPerPixel = 4;
+    _bytesPerRow = _bytesPerPixel * _width;
+    document.getElementById("out").innerHTML = "Done creating context";
+    setInterval(function(){draw()},100);
+}
+
+function draw(){
+    _drawing = true;
+    _context.putImageData(_imageData, 0, 0);
+    _drawing = false;
+}
+
+function readImgBuffer(buffer, rightSize){
+    document.getElementById("data").innerHTML = "Buffer length: "+buffer.length+" rightSize: "+rightSize;
+    if(_drawing == false && buffer.length == rightSize){
+        for(var y = 0; y < _height; y++) {
+            for(var x = 0; x < _width; x++) {
+                var canvasIndex = 4 * (x + y * _width);
+                var byteIndex   = (4 * _width * x) + y * 4;
+                
+                if(byteIndex + 3 < buffer.length){
+                    
+                    _imageData.data[canvasIndex    ] = buffer[byteIndex    ].charCodeAt(0);
+                    _imageData.data[canvasIndex + 1] = buffer[byteIndex + 1].charCodeAt(0);
+                    _imageData.data[canvasIndex + 2] = buffer[byteIndex + 2].charCodeAt(0);
+                    _imageData.data[canvasIndex + 3] = buffer[byteIndex + 3].charCodeAt(0);
+                    
+                }
+            }
+        }
+    //document.getElementById("data").innerHTML = "length: "+buffer.length+" data: "+buffer[680000].charCodeAt(0);
+    }
+
+}
+</script>
+
+
+</html>
